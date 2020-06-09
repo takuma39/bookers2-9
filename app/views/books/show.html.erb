@@ -1,0 +1,85 @@
+
+<div class="row">
+	<div class="col-xs-3">
+
+		<h2>User info</h2>
+		<%= render 'users/profile', user: @book.user %>
+
+		<h2>New book</h2>
+		<%= render 'books/newform', book: Book.new %>
+
+	</div>
+
+	<div class="col-xs-9">
+		<h2>Book detail</h2>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>image</th>
+					<th>Title</th>
+					<th>Opinion</th>
+					<th>like</th>
+					<th>comment</th>
+					<th colspan="3"></th>
+				</tr>
+			</thead>
+				<tr>
+					<!-- 写真・名前 -->
+					<td>
+						<%= link_to user_path(@book.user_id) do %>
+						<%= attachment_image_tag(@book.user, :profile_image, :fill, 100, 100, fallback: "no-image-mini.jpg") %><br>
+						<%= @book.user.name %>
+						<% end %>
+					</td>
+					<!-- title -->
+					<td><%= link_to @book.title, book_path(@book) %></td>
+					<!-- body -->
+					<td><%= @book.body %></td>
+					<!-- いいね -->
+					<td id="like-<%= @book.id %>">
+						<%= render 'favorites/favorite', book: @book %>
+					</td>
+					<!-- コメント数 -->
+					<td>
+						<i class="fa fa-comment"></i>
+						<%= @book.book_comments.count %> コメント
+					</td>
+					<!-- 編集・削除 -->
+					<% if @book.user_id == current_user.id %>
+					<td><%= link_to "Edit",edit_book_path(@book), class: "btn-sm btn-success edit_book_#{@book.id}" %></td>
+					<td><%= link_to "Destroy",@book, method: :delete, data: {confirm: "本当に削除してもよろしいですか？"}, class: "btn-sm btn-danger destroy_book_#{@book.id}" %></td>
+					<% end %>
+				</tr>
+			</table>
+
+
+			<!-- コメント一覧 -->
+			<div id="comments_area">
+				<%= render 'book_comments/comments', book: @book %>
+			</div>
+
+			<!-- 投稿エラー文 -->
+
+
+			<!-- コメント投稿 -->
+			<%= form_with(model: [@book, @book_comment]) do |f| %>
+			    <div class="row">
+			        <div class="col-sm-12">
+			            <%= f.text_area :comment, rows:'5', class: "form-control",placeholder: "コメントをここに" %>
+			        </div>
+			    </div>
+			    <%= f.submit "送信する", class: "btn btn-lg btn-base-1 mt-20 pull-right" %>
+			<% end %>
+
+
+
+
+
+
+	</div>
+</div>
+
+
+
+<!-- form_withはデフォルトでtrueがある -->
